@@ -5,3 +5,6 @@
 *.cubin
 *.fatbin
 *.out
+*.lib
+*.exe
+*.exp
