@@ -55,7 +55,7 @@ public:
         center(c), radius(r), radius2(r * r), surfaceColor(sc), emissionColor(ec),
         transparency(transp), reflection(refl)
     { /* empty */ }
-    bool intersect(const Vec3d &rayorig, const Vec3d &raydir, double &t0, double &t1) const
+    __host__ __device__ bool intersect(const Vec3d &rayorig, const Vec3d &raydir, double &t0, double &t1) const
     {
         Vec3d l = center - rayorig;
         double tca = l.dot(raydir);
