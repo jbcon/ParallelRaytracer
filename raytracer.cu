@@ -18,7 +18,7 @@ __global__ void trace(const Vec3d * ray_origins,
 
 int main(int argc, char* argv[]){
 
-    srand48(13);
+    // srand48(13);
     // command line args are width and height
     if (argc < 3){
         std::cerr << "ERROR: invalid command line arguments\nUsage: ./parallelrenderer.out <width> <height>" << std::endl;
