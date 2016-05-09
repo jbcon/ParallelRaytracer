@@ -5,14 +5,39 @@
 #include <fstream>
 
 #include "raytracer_utils.h"
+#if defined __linux__ || defined __APPLE__
+// "Compiled for Linux
+#else
+// Windows doesn't define these values by default, Linux does
+#define M_PI 3.141592653589793
+#define INFINITY 1e8
+#endif
 
 #define NUM_SPHERES 10
 // ================================================================
-__global__ void trace(const Vec3d * ray_origins,
-    const Vec3d * ray_dirs,
+__global__ void trace(const Vec3d * ray_origin
+    const Vec3d * ray_dir,
     const int * depth,
+    const Sphere * spheres,
     Vec3d * image){
         int index = threadIdx.x + blockIdx.x * blockDim.x;
+        Vec3d thisRayOrigin = ray_origins[index];
+        Vec3d thisRayDir = ray_dirs[index];
+        // determine closest sphere
+        double nearest = INFINITY;
+        const Sphere * sphere = NULL;
+        for(int i = 0; i < NUM_SPHERES; i++){
+            double t0 = INFINITY, t1 = INFINITY;
+            if (spheres[i].intersect(thisRayOrigin, thisRayDir, t0, t1)) {
+                if (t0 < 0) t0 = t1;
+                if (t0 < nearest) {
+                    nearest = t0;
+                    sphere = &spheres[i];
+                }
+            }
+        }
+
+
 
 }
 
@@ -43,11 +68,12 @@ int main(int argc, char* argv[]){
     h_spheres.push_back(Sphere(Vec3d( 0.0,     20, -15),     3, Vec3d(0.00, 0.00, 0.00), 1, 0.0, Vec3d(3)));
 
     cudaMalloc(&d_spheres, NUM_SPHERES * sizeof(Sphere));
-
-    // start render function
-
+    cudaMemcpy(d_spheres, h_spheres.data(), NUM_SPHERES, cudaMemcpyHostToDevice);
     // create image
     Vec3d * image = new Vec3d[width * height];
+
+    // start render function
+    render<<<1,1>>>(Vec3d())
 
     // write to file
 
