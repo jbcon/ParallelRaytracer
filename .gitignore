@@ -8,3 +8,5 @@
 *.lib
 *.exe
 *.exp
+*.ppm
+*.o
