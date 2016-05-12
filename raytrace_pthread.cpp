@@ -1,17 +1,17 @@
 #include <cstdlib>
-#include <cstdio>
 #include <cmath>
+#include <cstdio>
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <ctime>
 #include <cassert>
 #include <pthread.h>
-#include <ctime>
 
 #include "rt_classes.h"
 
 #define MAX_RAY_DEPTH 5
-#define NUM_THREADS 100
+#define NUM_THREADS 50
 
 unsigned int width = 640, height = 480;
 struct thread_data{
@@ -133,7 +133,7 @@ void *render_thread(void *threadarg){
 
 void random_spheres(std::vector<Sphere> &spheres, int n){
     for (int i = 0; i < n; i++){
-        spheres.push_back(Sphere(Vec3f( drand48() * 10 - 5, drand48() * 3 - 1, -drand48() * 40), drand48() * 1.2, Vec3f(drand48(), drand48(), drand48()), 0, drand48()));
+        spheres.push_back(Sphere(Vec3f( drand48() * 15 -7, drand48() * 3 - 1, -drand48() * 40 - 3), drand48(), Vec3f(drand48(), drand48(), drand48()), drand48(), drand48()));
     }
 }
 
@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 	// spheres.push_back(Sphere(Vec3f( 5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
 	// spheres.push_back(Sphere(Vec3f(-5.5, 0, -15), 3, Vec3f(0.90, 0.90, 0.90), 1, 0.0));
 
-    random_spheres(spheres, 100);
+    random_spheres(spheres, 50);
     // light
 	spheres.push_back(Sphere(Vec3f( 0.0, 20, -30), 3, Vec3f(0.00, 0.00, 0.00), 0, 0.0, Vec3f(3)));
 	//*
@@ -188,7 +188,11 @@ int main(int argc, char **argv)
     std::cout << "Compute finished in " << ((float)end-start)/CLOCKS_PER_SEC << " seconds" << std::endl;
 
 	// Save result to a PPM image (keep these flags if you compile under Windows)
-	std::ofstream ofs("./untitled.ppm", std::ios::out | std::ios::binary);
+
+    char filename[128];
+    sprintf(filename, "image%ux%u.ppm", width, height);
+
+	std::ofstream ofs(filename, std::ios::out | std::ios::binary);
 	ofs << "P6\n" << width << " " << height << "\n255\n";
 	for (unsigned i = 0; i < width * height; ++i) {
 		ofs << (unsigned char)(std::min(float(1), image[i].x) * 255) <<
