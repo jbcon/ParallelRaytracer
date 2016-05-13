@@ -10,8 +10,9 @@
 
 #include "rt_classes.h"
 
-#define MAX_RAY_DEPTH 5
+#define MAX_RAY_DEPTH 2
 #define NUM_THREADS 50
+#define MAX_FILENAME_SIZE 128
 
 unsigned int width = 640, height = 480;
 struct thread_data{
@@ -131,22 +132,23 @@ void *render_thread(void *threadarg){
 	pthread_exit(NULL);
 }
 
-void random_spheres(std::vector<Sphere> &spheres, int n){
+void random_spheres(std::vector<Sphere> &spheres, int n, float maxRadius){
     for (int i = 0; i < n; i++){
-        spheres.push_back(Sphere(Vec3f( drand48() * 15 -7, drand48() * 3 - 1, -drand48() * 40 - 3), drand48(), Vec3f(drand48(), drand48(), drand48()), drand48(), drand48()));
+        spheres.push_back(Sphere(Vec3f( drand48() * 15 -7, drand48() * 6 - 3, -drand48() * 20-8), drand48()*maxRadius, Vec3f(drand48(), drand48(), drand48()), drand48(), drand48()));
     }
 }
 
 
 int main(int argc, char **argv)
 {
-
-    if (argc == 3){
+    float maxRadius = 1.2;
+    if (argc == 4){
         width = atoi(argv[1]);
         height = atoi(argv[2]);
+        maxRadius = atof(argv[3]);
     }
 
-	srand48(13);
+	srand48(20);
 	std::vector<Sphere> spheres;
 	// position, radius, surface color, reflectivity, transparency, emission color
 	spheres.push_back(Sphere(Vec3f( 0.0, -10004, -20), 10000, Vec3f(0.20, 0.20, 0.20), 0, 0.0));
@@ -155,7 +157,7 @@ int main(int argc, char **argv)
 	// spheres.push_back(Sphere(Vec3f( 5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
 	// spheres.push_back(Sphere(Vec3f(-5.5, 0, -15), 3, Vec3f(0.90, 0.90, 0.90), 1, 0.0));
 
-    random_spheres(spheres, 50);
+    random_spheres(spheres, 50, maxRadius);
     // light
 	spheres.push_back(Sphere(Vec3f( 0.0, 20, -30), 3, Vec3f(0.00, 0.00, 0.00), 0, 0.0, Vec3f(3)));
 	//*
@@ -169,7 +171,6 @@ int main(int argc, char **argv)
     start = clock();
 
     std::cout << "Starting compute..." << std::endl;
-
     for(i = 0; i < NUM_THREADS; i++){
 		td[i].thread_id = i;
 		td[i].spheres = spheres;
