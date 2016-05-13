@@ -142,10 +142,12 @@ void random_spheres(std::vector<Sphere> &spheres, int n, float maxRadius){
 int main(int argc, char **argv)
 {
     float maxRadius = 1.2;
-    if (argc == 4){
+    int numSpheres = 50;
+    if (argc == 5){
         width = atoi(argv[1]);
         height = atoi(argv[2]);
-        maxRadius = atof(argv[3]);
+        numSpheres = atoi(argv[3]);
+        maxRadius = atof(argv[4]);
     }
 
 	srand48(20);
@@ -157,7 +159,7 @@ int main(int argc, char **argv)
 	// spheres.push_back(Sphere(Vec3f( 5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
 	// spheres.push_back(Sphere(Vec3f(-5.5, 0, -15), 3, Vec3f(0.90, 0.90, 0.90), 1, 0.0));
 
-    random_spheres(spheres, 50, maxRadius);
+    random_spheres(spheres, numSpheres, maxRadius);
     // light
 	spheres.push_back(Sphere(Vec3f( 0.0, 20, -30), 3, Vec3f(0.00, 0.00, 0.00), 0, 0.0, Vec3f(3)));
 	//*
