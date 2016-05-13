@@ -10,11 +10,10 @@
 
 #include "rt_classes.h"
 
-#define MAX_RAY_DEPTH 2
-#define NUM_THREADS 50
 #define MAX_FILENAME_SIZE 128
 
 unsigned int width = 640, height = 480;
+int MAX_RAY_DEPTH = 2, NUM_THREADS = 1;
 struct thread_data{
 	int thread_id;
 	std::vector<Sphere> spheres;
@@ -143,11 +142,13 @@ int main(int argc, char **argv)
 {
     float maxRadius = 1.2;
     int numSpheres = 50;
-    if (argc == 5){
+    if (argc == 7){
         width = atoi(argv[1]);
         height = atoi(argv[2]);
         numSpheres = atoi(argv[3]);
         maxRadius = atof(argv[4]);
+        NUM_THREADS = atoi(argv[5]);
+        MAX_RAY_DEPTH = atoi(argv[6]);
     }
 
 	srand48(20);
@@ -169,8 +170,14 @@ int main(int argc, char **argv)
 	Vec3f *image = new Vec3f[width * height];
 
     // start timing
+    /*
+    //gives real time for serial version, not for pthread version
     clock_t start, end;
     start = clock();
+    //other version is not as accurate but gives real time
+    //values for all methods
+	*/
+	time_t start = time(0); 
 
     std::cout << "Starting compute..." << std::endl;
     for(i = 0; i < NUM_THREADS; i++){
@@ -187,8 +194,15 @@ int main(int argc, char **argv)
 	for (i = 0; i < NUM_THREADS; i++){
 		pthread_join(threads[i], NULL);
 	}
+
+	/*
+	//continuation of clocks/sec timing method
     end = clock();
     std::cout << "Compute finished in " << ((float)end-start)/CLOCKS_PER_SEC << " seconds" << std::endl;
+	*/
+    time_t end = time(0);
+    double seconds = difftime(end, start);
+    printf("%.f seconds\n", seconds);
 
 	// Save result to a PPM image (keep these flags if you compile under Windows)
 
