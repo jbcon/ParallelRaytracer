@@ -11,4 +11,4 @@ all:
 	nvcc -o parallelrenderer.out --compiler-options -Wall -O3 raytracer.cu
 
 run:
-	./threadedrenderer.out 1920 1080 1.2
+	./threadedrenderer.out 4000 4000 1 20 20 5
